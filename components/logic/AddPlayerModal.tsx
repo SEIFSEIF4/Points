@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, TextInput } from "react-native";
 import { View, Text } from "@/components/Themed";
 import { AntDesign } from "@expo/vector-icons";
 import Modal from "react-native-modal";
+import { usePlayerData } from "./playerFunctions";
 
 type AddPlayerModalProps = {
   isVisible: boolean;
@@ -16,9 +17,10 @@ const AddPlayerModal = ({
   isVisible,
   playerName,
   setPlayerName,
-  addPlayer,
   closeModal,
 }: AddPlayerModalProps) => {
+  const addPlayer = usePlayerData();
+
   return (
     <Modal isVisible={isVisible} onBackButtonPress={closeModal}>
       <Text style={[AddPlayerModalStyles.title, { fontSize: 25 }]}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { View, Text } from "@/components/Themed";
 import { Pressable, StyleSheet } from "react-native";
 
@@ -10,10 +10,11 @@ import { usePlayer } from "@/hooks/player-context";
 
 // logic components
 import AddPlayerModal from "@/components/logic/AddPlayerModal";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 // icons
 import { AntDesign } from "@expo/vector-icons";
-import { ProgressBar, MD3Colors } from "react-native-paper";
+import BottomSheet from "../BottomSheet";
 
 const SectionControls = () => {
   const { players } = usePlayer();
@@ -21,8 +22,14 @@ const SectionControls = () => {
   const [playerName, setPlayerName] = useState<string>("");
   const [isOverlayVisible, setIsOverlayVisible] = useState<boolean>(false);
 
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const openModal = () => {
+    bottomSheetRef.current?.present();
+  };
+
   return (
     <>
+      <BottomSheet ref={bottomSheetRef} />
       <AddPlayerModal
         isVisible={isOverlayVisible}
         playerName={playerName}
@@ -45,6 +52,9 @@ const SectionControls = () => {
 
         <Pressable onPress={() => setIsOverlayVisible(!isOverlayVisible)}>
           <AntDesign name="adduser" size={55} color="white" />
+        </Pressable>
+        <Pressable onPress={openModal}>
+          <AntDesign name="setting" size={55} color="white" />
         </Pressable>
         {/* <ProgressBar progress={0.5} color={MD3Colors.error50} /> */}
       </View>

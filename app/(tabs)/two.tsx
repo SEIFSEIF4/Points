@@ -1,13 +1,17 @@
 import { StyleSheet } from "react-native";
 
 import { Text, View } from "@/components/Themed";
+import { Link } from "expo-router";
 
 export default function TabTwoScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title} className=" text-6xl text-fuchsia-700">
+      <Text style={styles.title} className="text-6xl text-fuchsia-700">
         Tab Two
       </Text>
+      <Link href="/" className="text-blue-500">
+        Go to Settings
+      </Link>
       <View
         style={styles.separator}
         lightColor="#eee"
