@@ -1,10 +1,9 @@
 import React from "react";
-import { View } from "@/components/Themed";
 
 // expo
 import { useKeepAwake } from "expo-keep-awake";
 
-// logic components
+//  components
 import PlayerList from "@/components/logic/PlayerList";
 import {
   usePlayerData,

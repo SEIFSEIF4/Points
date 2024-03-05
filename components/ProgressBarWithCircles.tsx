@@ -1,38 +1,88 @@
 import React from "react";
+import { View, ViewStyle, Pressable } from "react-native";
+import { Text } from "./Themed";
 
-const ProgressBarWithCircles = ({ progress, checkpoint, color }: any) => {
-  const numberOfCircles = Math.ceil(checkpoint / 10); // Assuming each circle represents 10% progress
-  const circleInterval = 100 / numberOfCircles; // Calculate the interval for each circle
+interface ProgressBarWithCirclesProps {
+  progress: number;
+  checkpoint: number;
+  color: string;
+}
+
+const ProgressBarWithCircles: React.FC<ProgressBarWithCirclesProps> = ({
+  progress,
+  checkpoint,
+  color,
+}) => {
+  const numberOfCircles = Math.ceil(checkpoint);
+  const circleInterval = 100 / numberOfCircles;
 
   const renderCircles = () => {
     const circles = [];
-    for (let i = 1; i <= numberOfCircles; i++) {
-      const circleStyle: React.CSSProperties = {
+    for (let i = 0; i <= numberOfCircles; i++) {
+      const circleStyle: ViewStyle = {
         position: "absolute",
-        left: `${i * circleInterval - circleInterval / 2}%`, // Adjust the position based on your styling needs
-        transform: "translateX(-50%)",
+        left: `${i * circleInterval}%`,
+        transform: [{ translateY: -7 }],
         backgroundColor: color,
-        width: "20px", // Adjust the circle size based on your styling needs
-        height: "20px",
-        borderRadius: "50%",
+        width: 20,
+        height: 20,
+        borderRadius: 10,
         zIndex: 2,
       };
 
-      circles.push(<div key={i} style={circleStyle}></div>);
+      console.log("circleStyle", numberOfCircles);
+
+      circles.push(
+        <Pressable key={i} style={circleStyle}>
+          <Text
+            style={{
+              color: "black",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 15,
+              fontWeight: "bold",
+            }}
+          >
+            {i}
+          </Text>
+        </Pressable>
+      );
     }
     return circles;
   };
 
   return (
-    <div className="relative w-full">
+    <View style={{ width: "80%", position: "relative" }}>
       {renderCircles()}
-      <div className="relative w-full h-4 bg-gray-300">
-        <div
-          className="h-full bg-red-500"
-          style={{ width: `${progress * 100}%`, zIndex: 1 }}
-        ></div>
-      </div>
-    </div>
+      <View
+        style={{
+          width: "100%",
+          height: 4,
+          backgroundColor: "gray",
+          position: "relative",
+        }}
+      >
+        <View
+          style={{
+            height: "100%",
+            backgroundColor: "grey",
+            width: "100%",
+            zIndex: 0,
+            position: "absolute",
+          }}
+        ></View>
+        <View
+          style={{
+            height: "100%",
+            backgroundColor: "green",
+            width: `${progress * 10}%`,
+            zIndex: 1,
+            position: "absolute",
+          }}
+        ></View>
+      </View>
+    </View>
   );
 };
 

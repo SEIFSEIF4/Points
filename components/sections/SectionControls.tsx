@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { View, Text } from "@/components/Themed";
 import { Pressable, StyleSheet } from "react-native";
+import { Button } from "react-native-paper";
 
 // expo
 import { Link } from "expo-router";
@@ -8,58 +9,71 @@ import { Link } from "expo-router";
 // hooks
 import { usePlayer } from "@/hooks/player-context";
 
-// logic components
-import AddPlayerModal from "@/components/logic/AddPlayerModal";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-
 // icons
 import { AntDesign } from "@expo/vector-icons";
-import BottomSheet from "../BottomSheet";
+import AddPlayer from "../AddPlayer";
 
-const SectionControls = () => {
+const SectionControls = ({ open, close }: any) => {
   const { players } = usePlayer();
+  const gameStarted = false;
 
-  const [playerName, setPlayerName] = useState<string>("");
-  const [isOverlayVisible, setIsOverlayVisible] = useState<boolean>(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const openModal = () => {
-    bottomSheetRef.current?.present();
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
   };
 
   return (
     <>
-      <BottomSheet ref={bottomSheetRef} />
-      <AddPlayerModal
-        isVisible={isOverlayVisible}
-        playerName={playerName}
-        setPlayerName={setPlayerName}
-        // addPlayer={addPlayer}
-        closeModal={() => setIsOverlayVisible(false)}
-      />
-      <View className="flex-row items-center justify-around w-full h-10 mx-4 my-5">
-        {players.length <= 1 ? (
-          <View className="items-center justify-center rounded-full opacity-50 w-30 h-50">
-            <Text className="text-white ">التالى</Text>
-          </View>
-        ) : (
-          <Link href="/two" asChild>
-            <Pressable className="items-center justify-center bg-black rounded-full w-30 h-50">
-              <Text className="text-white"> التالى</Text>
-            </Pressable>
-          </Link>
-        )}
-
-        <Pressable onPress={() => setIsOverlayVisible(!isOverlayVisible)}>
-          <AntDesign name="adduser" size={55} color="white" />
-        </Pressable>
-        <Pressable onPress={openModal}>
-          <AntDesign name="setting" size={55} color="white" />
-        </Pressable>
-        {/* <ProgressBar progress={0.5} color={MD3Colors.error50} /> */}
+      <View className="flex-row items-center justify-around w-full mx-4">
+        <View className="flex-col gap-5">
+          {players.length <= 1 ? (
+            <Button
+              disabled
+              className="items-center justify-center px-5 bg-red-500 border-2 border-red-500 rounded-full opacity-50 w-30 h-50 "
+            >
+              <Text className="text-white ">Start</Text>
+            </Button>
+          ) : (
+            <Link href="/two" asChild>
+              <Pressable className="items-center justify-center px-5 bg-red-500 border-2 border-red-500 rounded-full opacity-50 w-30 h-50 ">
+                <Text className="text-white">Start</Text>
+              </Pressable>
+            </Link>
+          )}
+          <Button
+            disabled={!gameStarted} // if gameStarted is false, the button will be disabled
+            className="items-center justify-center px-5 bg-red-500 border-2 border-red-500 rounded-full opacity-50 w-30 h-50 "
+          >
+            <Text className="text-white ">End Game</Text>
+          </Button>
+        </View>
+        <View className="flex-col gap-5">
+          <Pressable onPress={handleOpenDialog}>
+            <AntDesign name="adduser" size={50} color="white" />
+          </Pressable>
+          <Pressable onPress={open}>
+            <AntDesign name="setting" size={50} color="white" />
+          </Pressable>
+        </View>
       </View>
+      <AddPlayer openDialog={openDialog} setOpenDialog={setOpenDialog} />
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  startButton: {},
+  endButton: {},
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: "grey",
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+});
 
 export default SectionControls;

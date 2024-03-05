@@ -19,22 +19,57 @@ type PlayerListProps = {
 };
 
 const PlayerList = ({ players, deletePlayer }: PlayerListProps) => {
+  const animatedValues = useRef(
+    players.map(() => new Animated.Value(1200))
+  ).current;
+
+  //animation
+
+  useEffect(() => {
+    Animated.stagger(
+      100,
+      animatedValues.map((animatedValue, index) =>
+        Animated.timing(animatedValue, {
+          toValue: 0,
+          duration: 500,
+          delay: index * 100,
+          useNativeDriver: true,
+        })
+      )
+    ).start();
+  }, [players]);
+
+  const reverseAnimation = (index: number) => {
+    const animatedValue = animatedValues[index];
+
+    if (animatedValue) {
+      Animated.timing(animatedValue, {
+        toValue: 1200,
+        duration: 500,
+        delay: 0,
+        useNativeDriver: true,
+      }).start(() => {
+        deletePlayer(index);
+      });
+    }
+  };
+
   return (
     <View style={PlayerListStyles.playerContainer}>
       <FlatList
         data={players}
         renderItem={({ item, index }) => (
-          <View style={[PlayerListStyles.playerHolder]}>
+          <Animated.View
+            style={[
+              PlayerListStyles.playerHolder,
+              { transform: [{ translateX: animatedValues[index] }] },
+            ]}
+          >
             <Pressable
               style={PlayerListStyles.startButton}
-              onPress={() => deletePlayer(index)}
+              onPress={() => reverseAnimation(index)}
             >
-              <AntDesign
-                name="minuscircleo"
-                size={55}
-                color="white"
-                style={{ opacity: 0.8 }}
-              />
+              <AntDesign name="minuscircleo" size={55} color="white" />
             </Pressable>
 
             <View
@@ -47,10 +82,9 @@ const PlayerList = ({ players, deletePlayer }: PlayerListProps) => {
                 <Text style={PlayerListStyles.playerNameText}> {item}</Text>
               </Pressable>
             </View>
-          </View>
+          </Animated.View>
         )}
         keyExtractor={(item, index) => index.toString()}
-        extraData={players}
       />
     </View>
   );
@@ -59,7 +93,6 @@ const PlayerList = ({ players, deletePlayer }: PlayerListProps) => {
 const PlayerListStyles = StyleSheet.create({
   playerContainer: {
     flex: 0.5,
-    flexGrow: 0.7,
     width: "100%",
     height: "100%",
     gap: 20,
@@ -71,7 +104,7 @@ const PlayerListStyles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginVertical: 10,
-    // transform: [{ translateX: 1200 }],
+    transform: [{ translateX: 1200 }],
   },
   playerNameHolder: {
     flexDirection: "row",
@@ -79,14 +112,11 @@ const PlayerListStyles = StyleSheet.create({
     alignItems: "center",
     width: "60%",
     height: 55,
+    backgroundColor: "white",
     borderTopLeftRadius: 100,
     borderBottomLeftRadius: 100,
     alignSelf: "flex-end",
     gap: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.074)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
-
     ...Platform.select({
       ios: {
         shadowColor: "black",
@@ -103,7 +133,7 @@ const PlayerListStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "500",
     textAlign: "center",
-    color: "white",
+    color: "black",
     width: "100%",
     maxWidth: 200,
   },

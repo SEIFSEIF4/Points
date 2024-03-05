@@ -16,7 +16,7 @@ type UseSettingHook = {
   setState: Dispatch<SetStateAction<SettingsState>>;
 };
 
-const useSetting = (initialState: SettingsState): UseSettingHook => {
+const useSettingDeduce = (initialState: SettingsState): UseSettingHook => {
   const [state, setState] = useState<SettingsState>(initialState);
 
   const reset = () => {
@@ -35,4 +35,4 @@ const useSetting = (initialState: SettingsState): UseSettingHook => {
   return { state, reset, save, setState };
 };
 
-export default useSetting;
+export default useSettingDeduce;

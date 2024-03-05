@@ -1,39 +1,38 @@
-import { StyleSheet } from "react-native";
+import React from "react";
+import { Pressable, ScrollView, useWindowDimensions } from "react-native";
 
 import { Text, View } from "@/components/Themed";
-import { Link } from "expo-router";
+import SectionCustomHeader from "@/components/sections/SectionCustomHeader";
+
+// expo
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import AccordionListComponent from "@/components/Accordion";
 
 export default function TabTwoScreen() {
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title} className="text-6xl text-fuchsia-700">
-        Tab Two
-      </Text>
-      <Link href="/" className="text-blue-500">
-        Go to Settings
-      </Link>
+    <SafeAreaProvider>
       <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-    </View>
+        style={[{ paddingTop: insets.top + 15 }, { width }]}
+        className="relative flex items-center justify-around flex-1 w-full min-h-screen bg-gray-800"
+      >
+        <ScrollView
+          style={{ width: width, paddingTop: 50 }}
+          contentContainerStyle={{
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ width: width - 25 }}>
+            <AccordionListComponent />
+          </View>
+        </ScrollView>
+      </View>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    // fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-});

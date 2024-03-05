@@ -3,7 +3,7 @@ import { View, Text } from "@/components/Themed";
 import { Pressable, StyleSheet } from "react-native";
 import { TextInput, Switch } from "react-native-paper";
 import { AntDesign } from "@expo/vector-icons";
-import useSetting from "@/hooks/Settings-context";
+import useSetting from "@/hooks/SettingsReduce";
 
 const SectionSettings = () => {
   // const { state, reset, save, setState } = useSetting(initialState);
