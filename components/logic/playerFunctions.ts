@@ -9,7 +9,6 @@ import { useSettings } from "@/hooks/Settings-context";
 
 export const usePlayerData = () => {
   const { players, setPlayers } = usePlayer();
-  const { rounds } = useSettings();
 
   useEffect(() => {
     const loadPlayerData = async () => {
@@ -40,23 +39,41 @@ export const usePlayerData = () => {
 };
 
 export const addPlayer = (
+  players: string[],
   playerName: string,
   setPlayerName: React.Dispatch<React.SetStateAction<string>>,
-  players: string[],
   setPlayers: React.Dispatch<React.SetStateAction<string[]>>,
-  points: number[][],
-  setPoints: React.Dispatch<React.SetStateAction<number[][]>>
+  playerRoundPoints: string[],
+  setPlayerRoundPoints: React.Dispatch<React.SetStateAction<string[]>>,
+  currentRound: number
 ): void => {
+  // if (playerName.trim() !== "") {
+  //   setPlayers((prevPlayers) => [...prevPlayers, playerName]);
+  //   setPlayerRoundPoints((prevRoundPoints) => [...prevRoundPoints, ""]);
+
+  //   setPlayerName("");
+  // }
+
   if (playerName.trim() !== "") {
-    setPlayers((prevPlayers) => [...prevPlayers, playerName]);
+    // Add the new player to the players array
+    const updatedPlayers = [...players, playerName];
 
-    // const roundsLength = 5;
-    // const initialPoints: number[][] = Array.from<number>({
-    //   length: roundsLength,
-    // }).fill(0);
+    // If the player is added after round 2, reset all previous rounds for the new player to 20
+    let updatedPlayerRoundPoints = [...playerRoundPoints];
+    if (currentRound > 1) {
+      updatedPlayerRoundPoints = updatedPlayerRoundPoints.map(() => "20");
+    }
 
-    // setPoints((prevPoints) => [...prevPoints, initialPoints]);
+    // Add the new player to the playerRoundPoints array with default points for each round
+    updatedPlayerRoundPoints.push(
+      ...Array.from({ length: playerRoundPoints.length }, () => "20")
+    );
 
+    // Update the state with the new players and their points
+    setPlayers(updatedPlayers);
+    setPlayerRoundPoints(updatedPlayerRoundPoints);
+
+    // Clear the input for the player name
     setPlayerName("");
   }
 };
@@ -64,9 +81,16 @@ export const addPlayer = (
 export const deletePlayer = (
   index: number,
   players: string[],
-  setPlayers: React.Dispatch<React.SetStateAction<string[]>>
+  setPlayers: React.Dispatch<React.SetStateAction<string[]>>,
+  playerRoundPoints: string[],
+  setPlayerRoundPoints: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
   const updatedPlayers = [...players];
+  const updatedPlayerRoundPoints = [...playerRoundPoints];
+
   updatedPlayers.splice(index, 1);
+  updatedPlayerRoundPoints.splice(index, 1);
+
   setPlayers(updatedPlayers);
+  setPlayerRoundPoints(updatedPlayerRoundPoints);
 };

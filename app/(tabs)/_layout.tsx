@@ -6,6 +6,8 @@ import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import PlayerProvider from "@/hooks/player-context";
 import SettingsProvider from "@/hooks/Settings-context";
+import TimerProvider from "@/hooks/Timer-context";
+import AlertProvider from "@/components/AlertProvider";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -14,15 +16,19 @@ export default function TabLayout() {
     <PaperProvider>
       <SettingsProvider>
         <PlayerProvider>
-          <Tabs
-            screenOptions={{
-              tabBarActiveTintColor: Colors[colorScheme ?? "dark"].tint,
-              headerShown: false,
-              tabBarStyle: {
-                display: "none",
-              },
-            }}
-          />
+          <TimerProvider>
+            <AlertProvider>
+              <Tabs
+                screenOptions={{
+                  tabBarActiveTintColor: Colors[colorScheme ?? "dark"].tint,
+                  headerShown: false,
+                  tabBarStyle: {
+                    display: "none",
+                  },
+                }}
+              />
+            </AlertProvider>
+          </TimerProvider>
         </PlayerProvider>
       </SettingsProvider>
     </PaperProvider>

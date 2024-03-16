@@ -1,18 +1,24 @@
 import React from "react";
 import { View, ViewStyle, Pressable } from "react-native";
 import { Text } from "./Themed";
+import { useSettings } from "@/hooks/Settings-context";
 
 interface ProgressBarWithCirclesProps {
-  progress: number;
-  checkpoint: number;
-  color: string;
+  progress?: number;
+  checkpoint?: number;
+  color?: string;
 }
 
 const ProgressBarWithCircles: React.FC<ProgressBarWithCirclesProps> = ({
-  progress,
-  checkpoint,
-  color,
+  progress = 0,
+  checkpoint = 5,
+  color = "#000",
 }) => {
+  const { rounds, currentRound } = useSettings();
+
+  checkpoint = rounds;
+  progress = 90;
+
   const numberOfCircles = Math.ceil(checkpoint);
   const circleInterval = 100 / numberOfCircles;
 
@@ -29,8 +35,6 @@ const ProgressBarWithCircles: React.FC<ProgressBarWithCirclesProps> = ({
         borderRadius: 10,
         zIndex: 2,
       };
-
-      console.log("circleStyle", numberOfCircles);
 
       circles.push(
         <Pressable key={i} style={circleStyle}>
@@ -76,7 +80,7 @@ const ProgressBarWithCircles: React.FC<ProgressBarWithCirclesProps> = ({
           style={{
             height: "100%",
             backgroundColor: "green",
-            width: `${progress * 10}%`,
+            width: `${progress}%`,
             zIndex: 1,
             position: "absolute",
           }}

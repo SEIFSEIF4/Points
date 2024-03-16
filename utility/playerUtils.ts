@@ -1,79 +1,196 @@
-type PlayerContextValue = {
-  players: string[];
-  setPlayers: React.Dispatch<React.SetStateAction<string[]>>;
-  points: number[][];
-  setPoints: React.Dispatch<React.SetStateAction<number[][]>>;
+export const handlePointsChange = (
+  playerIndex: number,
+  value: string,
+  playerRoundPoints: string[]
+): string[] => {
+  //
+
+  // Update the state
+  const updatedPoints: string[] = [...playerRoundPoints];
+  updatedPoints[playerIndex] = value.toString();
+  return updatedPoints;
 };
+
+export const calculateTotalPointsForPlayer = (
+  playerIndex: number,
+  rounds: number,
+  savedInputs: Record<number, string[]>
+): number => {
+  let totalPoints = 0;
+
+  for (let round = 1; round <= rounds; round++) {
+    const roundPoints = savedInputs[round]?.[playerIndex];
+    totalPoints += parseInt(roundPoints) || 0;
+  }
+
+  return totalPoints;
+};
+
+// export const calculateTotalPointsForAllPlayers = (
+//   rounds: number,
+//   savedInputs: Record<number, string[]>,
+//   players: string[]
+// ): Record<number, number> => {
+//   const totalPoints: Record<number, number> = {};
+
+//   for (let round = 1; round <= rounds; round++) {
+//     for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
+//       const roundPoints = savedInputs[round]?.[playerIndex];
+//       totalPoints[round] = totalPoints[round] + (parseInt(roundPoints) || 0);
+//     }
+//   }
+
+//   return totalPoints;
+// };
+
+// export const calculateAveragePointsForPlayer = (
+//   playerIndex: number,
+//   rounds: number,
+//   savedInputs: Record<number, string[]>
+// ): number => {
+//   const totalPoints = calculateTotalPointsForPlayer(
+//     playerIndex,
+//     rounds,
+//     savedInputs
+//   );
+//   return totalPoints / rounds;
+// };
+
+// export const calculateAveragePointsForAllPlayers = (
+//   rounds: number,
+//   savedInputs: Record<number, string[]>,
+//   players: string[]
+// ): Record<string, number> => {
+//   const totalRounds = Object.keys(savedInputs).length;
+
+//   const averagePoints: Record<string, number> = {};
+
+//   // Calculate the average points for each player
+//   players.forEach((player) => {
+//     let sum = 0;
+//     for (let round = 1; round <= totalRounds; round++) {
+//       const points = parseFloat(savedInputs[round]?.[players.indexOf(player)]);
+//       if (!isNaN(points)) {
+//         sum += points;
+//       }
+//     }
+//     averagePoints["Avg : "] = sum / totalRounds;
+//   });
+
+//   return averagePoints;
+// };
+
+// export const calculateTotalPointsForRound = (
+//   round: number,
+//   savedInputs: Record<number, string[]>
+// ): number => {
+//   let totalPoints = 0;
+
+//   for (let playerIndex = 0; playerIndex < 4; playerIndex++) {
+//     const roundPoints = savedInputs[round]?.[playerIndex];
+//     totalPoints += parseInt(roundPoints) || 0;
+//   }
+
+//   return totalPoints;
+// };
+
+// export const calculateAveragePointsForRound = (
+//   round: number,
+//   savedInputs: Record<number, string[]>
+// ): number => {
+//   const totalPoints = calculateTotalPointsForRound(round, savedInputs);
+//   return totalPoints / round;
+// };
+
+// export const calculateTotalPointsForAllRounds = (
+//   rounds: number,
+//   savedInputs: Record<number, string[]>
+// ): number => {
+//   let totalPoints = 0;
+
+//   for (let round = 1; round <= rounds; round++) {
+//     totalPoints += calculateTotalPointsForRound(round, savedInputs);
+//   }
+
+//   return totalPoints;
+// };
+
+// export const calculateAveragePointsForAllRounds = (
+//   rounds: number,
+//   players: string[],
+//   savedInputs: Record<number, string[]>
+// ): number => {
+//   const totalPoints = calculateTotalPointsForAllRounds(rounds, savedInputs);
+//   return totalPoints / (players.length * rounds);
+// };
 
 export const determineLoser = (
-  players: string[],
-  points: number[][]
-): string => {
-  // Implement the logic to determine the loser based on total points
-  // This function could be similar to the one provided earlier
-  return "ExampleLoser"; // Replace with your logic
+  savedInputs: Record<number, string[]>,
+  rounds: number,
+  players: string[]
+): string[] | null => {
+  // Check if there are enough saved inputs to determine a Loser
+  if (Object.keys(savedInputs).length < 1)
+    return ["play at least one round to determine a loser"];
+
+  const totalPoints = players.map((_, index) =>
+    calculateTotalPointsForPlayer(index, rounds, savedInputs)
+  );
+  const maxPoints = Math.max(...totalPoints);
+
+  // Find all players with the maximum points
+  const loserIndices = totalPoints.reduce(
+    (loser: number[], points: number, index: number) =>
+      points === maxPoints ? [...loser, index] : loser,
+    []
+  );
+
+  // Return an array of losers or null if no losers
+  return loserIndices.length > 0
+    ? loserIndices.map((index) => players[index])
+    : null;
 };
 
-export const enterPoints = (
-  playerIndex: number,
-  round: number,
-  points: number[][],
-  setPoints: React.Dispatch<React.SetStateAction<number[][]>>,
-  pointsForRound: string
+export const determineWinner = (
+  savedInputs: Record<number, string[]>,
+  rounds: number,
+  players: string[]
+): string[] | null => {
+  // Check if there are enough saved inputs to determine a Winner
+  if (Object.keys(savedInputs).length < 1)
+    return ["play at least one round to determine a winner"];
+
+  const totalPoints = players.map((_, index) =>
+    calculateTotalPointsForPlayer(index, rounds, savedInputs)
+  );
+  const minPoints = Math.min(...totalPoints);
+
+  // Find all players with the minimum points
+  const winnerIndices = totalPoints.reduce(
+    (winner: number[], points: number, index: number) =>
+      points === minPoints ? [...winner, index] : winner,
+    []
+  );
+
+  // Return an array of winners or null if no winners
+  return winnerIndices.length > 0
+    ? winnerIndices.map((index) => players[index])
+    : null;
+};
+
+export const handleBackRound = (
+  currentRound: number,
+  setCurrentRound: React.Dispatch<React.SetStateAction<number>>
 ): void => {
-  // Implement the logic to update points for a player in a round
-  // This function could be similar to the one provided earlier
-  const updatedPoints = [...points];
-  updatedPoints[playerIndex][round - 1] = parseInt(pointsForRound);
-  setPoints(updatedPoints);
+  if (currentRound === 1) return;
+  setCurrentRound((prevRound) => prevRound - 1);
 };
 
-export const addPlayer = (
-  playerName: string,
-  players: string[],
-  setPlayers: React.Dispatch<React.SetStateAction<string[]>>,
-  points: number[][],
-  setPoints: React.Dispatch<React.SetStateAction<number[][]>>
+export const handleNextRound = (
+  currentRound: number,
+  rounds: number,
+  setCurrentRound: React.Dispatch<React.SetStateAction<number>>
 ): void => {
-  // Implement the logic to add a player and initialize points for that player
-  // This function could be similar to the one provided earlier
-  setPlayers([...players, playerName]);
-  setPoints([...points, Array(5).fill(0)]);
+  if (currentRound === rounds) return;
+  setCurrentRound((prevRound) => prevRound + 1);
 };
-
-const handleAddRound = () => {
-  setRounds((prevRounds) => prevRounds + 1);
-};
-
-const handlePointsChange2 = (
-  playerIndex: number,
-  roundIndex: number,
-  value: string
-) => {
-  setPlayers((prevPlayers) => {
-    const updatedPlayers: any[] = [...prevPlayers];
-    updatedPlayers[playerIndex].points[roundIndex] = parseInt(value) || 0;
-    return updatedPlayers;
-  });
-};
-
-const renderRoundInputs = (player: any, playerIndex: number) => (
-  <View
-    key={playerIndex}
-    style={styles.PlayerContainer}
-    className="w-1/2 p-2 mx-auto mt-2 bg-black rounded-lg"
-  >
-    <Text>{players[playerIndex]}</Text>
-    {/*{Array.from({ length: rounds }, (_, roundIndex) => (
-      <TextInput
-        key={roundIndex}
-        style={styles.input}
-        placeholder={`Round ${player.points}`}
-        // value={player.points[roundIndex]?.toString()}
-        onChangeText={(text) =>
-          handlePointsChange(playerIndex, roundIndex, text)
-        }
-      />
-    ))} */}
-  </View>
-);

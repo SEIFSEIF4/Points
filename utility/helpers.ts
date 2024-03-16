@@ -1,4 +1,3 @@
-// helpers.ts
 export const isEmpty = (playerRoundPoints: string[]) => {
   return playerRoundPoints.every((e) => e === "");
 };

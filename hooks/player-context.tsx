@@ -6,6 +6,10 @@ type PlayerContextValue = {
 
   playerName: string;
   setPlayerName: React.Dispatch<React.SetStateAction<string>>;
+
+  playerRoundPoints: string[];
+  setPlayerRoundPoints: React.Dispatch<React.SetStateAction<string[]>>;
+
   points: number[][];
   setPoints: React.Dispatch<React.SetStateAction<number[][]>>;
 };
@@ -15,21 +19,16 @@ export const PlayerContext = createContext<PlayerContextValue | null>(null);
 export default function PlayerProvider({ children }: any) {
   const [points, setPoints] = useState<number[][]>([]);
   const [playerName, setPlayerName] = useState<string>("");
-
   const [players, setPlayers] = useState<string[]>([]);
-  // "Seif Elesllam","Nedal","Mks","Islam",
+  const [playerRoundPoints, setPlayerRoundPoints] = React.useState<string[]>(
+    Array.from({ length: players.length }, () => "")
+  );
 
-  useEffect(() => {
-    const initializePoints = () => {
-      const roundsLength = 4;
-      const initialPoints: number[][] = Array.from(
-        { length: players.length },
-        () => Array.from({ length: roundsLength }).fill(0) as number[]
-      );
-      setPoints(initialPoints);
-    };
-
-    initializePoints();
+  React.useEffect(() => {
+    // Initialize playerRoundPoints once when players array is populated
+    if (players.length > 0) {
+      setPlayerRoundPoints(Array.from({ length: players.length }, () => ""));
+    }
   }, [players]);
 
   return (
@@ -41,6 +40,8 @@ export default function PlayerProvider({ children }: any) {
         setPoints,
         playerName,
         setPlayerName,
+        playerRoundPoints,
+        setPlayerRoundPoints,
       }}
     >
       {children}

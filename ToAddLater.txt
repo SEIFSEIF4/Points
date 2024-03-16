@@ -1,0 +1,4 @@
+more modes
+graph with statics
+sounds 
+animations

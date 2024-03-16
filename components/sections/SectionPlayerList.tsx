@@ -16,14 +16,23 @@ import { usePlayer } from "@/hooks/player-context";
 const SectionPlayerList = () => {
   // useKeepAwake();
 
-  const { players, setPlayers } = usePlayer();
+  const { players, setPlayers, setPlayerRoundPoints, playerRoundPoints } =
+    usePlayer();
 
   usePlayerData();
 
   return (
     <PlayerList
       players={players}
-      deletePlayer={(index) => deletePlayer(index, players, setPlayers)}
+      deletePlayer={(index) =>
+        deletePlayer(
+          index,
+          players,
+          setPlayers,
+          playerRoundPoints,
+          setPlayerRoundPoints
+        )
+      }
     />
   );
 };

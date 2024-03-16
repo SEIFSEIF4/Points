@@ -2,13 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { View, Text } from "@/components/Themed";
 
 // expo
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Platform,
-  Animated,
-} from "react-native";
+import { FlatList, Pressable, StyleSheet, Platform } from "react-native";
 
 // icons
 import { AntDesign } from "@expo/vector-icons";
@@ -43,7 +37,7 @@ const PlayerList = ({ players, deletePlayer }: PlayerListProps) => {
                 PlayerListStyles.boxShadow,
               ]}
             >
-              <Pressable onLongPress={() => alert("edit name")}>
+              <Pressable>
                 <Text style={PlayerListStyles.playerNameText}> {item}</Text>
               </Pressable>
             </View>
